@@ -1,0 +1,20 @@
+/* 学号 班级 姓名 */
+#include <iostream>
+using namespace std;
+int peaches(int days)
+{
+
+    if (days == 1)
+        return 1;
+    else
+        return (peaches(days - 1) + 1) * 2;
+}
+
+int main()
+{
+    int days;
+    cout << "请输入第几天的桃子数为1" << endl;
+    cin >> days; // 输入[1-30]间的正整数即可，不考虑输入错误
+    cout << "第1天买的桃子数量=" << peaches(days) << endl;
+    return 0;
+}

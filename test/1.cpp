@@ -1,10 +1,14 @@
 #include <bits/stdc++.h>
+#include <iostream>
+#include <cstdio>
+#include <conio.h>
+#include <time.h>
+#include <windows.h>
 using namespace std;
+const double pi = 3.14159;
 int main()
 {
-    string s = "10111001";
-    for (int i = 1; i <= 8; i++)
-    {
-        cout << s[i - 1] << " \\times 2^{-" << i << "} + ";
-    }
+	int a, b;
+	cin >> a >> b;
+	cout << __gcd(a, b);
 }

@@ -1,10 +1,12 @@
 #include <iostream>
 using namespace std;
 
-int main()
+long main()
 {
-    for (int i = 1; i <= 10; i++)
-    {
-        cout << "_" << i << " <<\" \"";
-    }
+    /* 注意：输出必须改为自己学号-姓名 */
+    cout << "2451317-冯久恒" << endl;
+
+    return 0L;
 }
+
+
