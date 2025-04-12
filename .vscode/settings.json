@@ -5,6 +5,7 @@
         "iostream": "cpp",
         "iomanip": "cpp",
         "functional": "cpp",
-        "limits": "cpp"
+        "limits": "cpp",
+        "stdio.h": "c"
     }
 }

@@ -1,105 +1,97 @@
-// 2451317 冯久恒 计算机
+// 2451317 冯久恒 计算机 
 #include <iostream>
 #include <iomanip>
 #include <limits>
 using namespace std;
-int calc_date(int y, int m)
+
+void hanoi(int n, char src, char tmp, char dst) // n-层数;src-起始柱;tmp-中间柱;dst-目标柱
 {
-    int dd;
-    if (m == 1 || m == 3 || m == 5 || m == 7 || m == 8 || m == 10 || m == 12)
-        dd = 31;
-    else if (m != 2)
-        dd = 30;
-    else
+    static int cnt = 0;
+    if (n == 1)
     {
-        if (y % 4 == 0 && y % 100 != 0)
-        {
-            dd = 29;
-        }
-        else
-        {
-            if (y % 400 == 0)
-                dd = 29;
-            else
-                dd = 28;
-        }
+        cnt++;
+        cout << setw(5) << cnt << ": ";
+        cout << setw(2) << n;
+        cout << "# " << src << "-->" << dst << endl;
+        return;
     }
-    return dd;
+    hanoi(n - 1, src, dst, tmp);
+    cnt++;
+    cout << setw(5) << cnt << ": ";
+    cout << setw(2) << n;
+    cout << "# " << src << "-->" << dst << endl;
+    hanoi(n - 1, tmp, src, dst);
 }
-int calc_week(int y, int m, int d)
-{
-    int c, yy, ww;
-    if (m <= 2)
-        m += 12, y--;
-    c = y / 100, yy = y % 100;
-    ww = yy + (yy / 4) + (c / 4) - (2 * c) + ((m + 1) * 13 / 5) + (d - 1);
-    if (ww < 0)
-        ww += 7;
-    ww %= 7;
-    return ww;
-}
-void output(int w)
-{
-    cout << "星期";
-    switch (w)
-    {
-    case 0:
-        cout << "日" << endl;
-        break;
-    case 1:
-        cout << "一" << endl;
-        break;
-    case 2:
-        cout << "二" << endl;
-        break;
-    case 3:
-        cout << "三" << endl;
-        break;
-    case 4:
-        cout << "四" << endl;
-        break;
-    case 5:
-        cout << "五" << endl;
-        break;
-    case 6:
-        cout << "六" << endl;
-        break;
-    }
-}
+
 int main()
 {
-    int y, m, d;
+    int n;
+    char src, dst, tmp;
+    // Input n
     while (1)
     {
-        cout << "请输入年[1900-2100]、月、日：";
-        cin >> y >> m >> d;
-        if (cin.good() != 1)
+        cout << "请输入汉诺塔的层数(1-16)" << endl;
+        cin >> n;
+        if (cin.good() != 1 || (n < 1 || n > 16))
         {
-            cout << "输入非法，请重新输入" << endl;
             cin.clear();
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
         }
-        else if (m < 1 || m > 12)
+        else
         {
-            cout << "月份不正确，请重新输入" << endl;
-            continue;
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            break;
         }
-        else if (y < 1900 || y > 2100)
+    }
+    // Input Source & Destination
+    while (1)
+    {
+        cout << "请输入起始柱(A-C)" << endl;
+        cin >> src;
+        src = toupper(src);
+        if (cin.good() != 1 || (src < 'A' || src > 'C'))
         {
-            cout << "年份不正确，请重新输入" << endl;
-            continue;
-        }
-        else if (d > calc_date(y, m) || d < 0)
-        {
-            cout << "日不正确，请重新收入" << endl;
-            continue;
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
         }
         else
+        {
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
             break;
+        }
     }
-    int w = calc_week(y, m, d);
-    cout << endl;
-    output(w);
-
+    while (1)
+    {
+        cout << "请输入目标柱(A-C)" << endl;
+        cin >> dst;
+        dst = toupper(dst);
+        if (cin.good() != 1 || (dst < 'A' || dst > 'C'))
+        {
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        }
+        else if (dst == src)
+        {
+            cout << "目标柱(" << dst << ")不能与起始柱(" << src << ")相同" << endl;
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        }
+        else
+        {
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            break;
+        }
+    }
+    for (int i = 'A'; i <= 'C'; i++)
+    {
+        if (i == src || i == dst)
+            continue;
+        tmp = i;
+    }
+    cout << "移动步骤为:" << endl;
+    hanoi(n, src, tmp, dst);
     return 0;
 }
