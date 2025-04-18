@@ -1,4 +1,4 @@
-./test
-./VS-TEST
-./.vs
-./.vscode
+test
+VS-TEST
+.vs
+.vscode
