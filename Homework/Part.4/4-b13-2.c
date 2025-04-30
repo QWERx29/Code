@@ -50,7 +50,7 @@ int main()
         int ret;
         printf("请输入起始柱(A-C)\n");
         ret = scanf("%c", &src);
-        if (src >= 'a' || src <= 'z')
+        if (src >= 'a' && src <= 'z')
             src -= ('a' - 'A');
         if (ret != 1 || (src < 'A' || src > 'C'))
         {
@@ -71,7 +71,7 @@ int main()
         int ret;
         printf("请输入目标柱(A-C)\n");
         ret = scanf("%c", &dst);
-        if (dst >= 'a' || dst <= 'z')
+        if (dst >= 'a' && dst <= 'z')
             dst -= ('a' - 'A');
         if (ret != 1 || (dst < 'A' || dst > 'C'))
         {
