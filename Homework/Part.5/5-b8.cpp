@@ -1,0 +1,202 @@
+// 2451317 冯久恒 计算机 
+#define _CRT_SECURE_NO_WARNINGS
+#include <iostream>
+#include <cstdio>
+#include <cstring>
+#include <iomanip>
+using namespace std;
+
+#define N_POW 112       // 幂的次数
+#define N_NUM N_POW + 1 // 十进制形式的小数位数
+
+// 输出某一行的幂次（某个一维数组的内容）
+// pormpt为非空串则输出串内容 ; 为空串则输出“2^-xxx”，具体见demo
+void output(const char prompt[], const char d[])
+{
+    if (strlen(prompt) == 0)
+    {
+        cout << "2^" << setw(4) << (int)d[0] << " : 0.";
+        for (int j = 1; j <= N_POW; j++)
+        {
+            if (j <= -d[0])
+                cout << (int)d[j];
+        }
+        cout << endl;
+    }
+    else
+    {
+        printf("%s", prompt);
+        int s = N_NUM, f = 0;
+        for (int i = 1; i <= N_NUM; i++)
+        {
+            f = 0;
+            for (int j = i; j <= N_NUM; j++)
+                if (d[j] != 0 && d[j] != '0')
+                    f = 1;
+            if (f == 0)
+            {
+                s = i;
+                break;
+            }
+        }
+        for (int i = 1; i < s; i++)
+        {
+            if (d[i] >= 0 && d[i] <= 9)
+                cout << (int)d[i];
+            else if (d[i] == '0' || d[i] == '1')
+                cout << d[i];
+        }
+        cout << endl;
+    }
+}
+
+// 用二维数组第i行的值，计算第i+1行
+void calc_next(char d_cur[], char d_next[])
+{
+    for (int i = 1; i <= N_POW; i++)
+    {
+        if (d_cur[i] != 0)
+        {
+            d_next[i] += d_cur[i] / 2;
+            if (d_cur[i] % 2 == 1)
+                d_next[i + 1] += 5;
+        }
+    }
+}
+
+// 根据幂次表，计算某个二进制小数的十进制值
+// char pure_decimal[] : 存放二进制小数的数组 ; char out[] ：存放计算得到的十进制小数 ; char power_table[][N_NUM + 1]：幂次表
+void calc_num(char pure_decimal[], char out[], char power_table[][N_NUM + 1])
+{
+    for (int i = 1; i <= N_NUM; i++)
+    {
+        if (pure_decimal[i] == '1')
+        {
+            for (int j = 1; j <= N_NUM; j++)
+                out[j] += (power_table[i][j]);
+        }
+        for (int j = 1; j <= N_NUM; j++)
+        {
+            if ((int)out[j] >= 10)
+            {
+                out[j - 1] += (out[j] / 10);
+                out[j] %= 10;
+            }
+        }
+        
+    }
+}
+
+// 输入一个二进制纯小数
+void input_pure_decimal(char pure_decimal[])
+{
+    cout << endl;
+    cout << "请输入一个二进制纯小数，小数点开头，小数点后不超过112位(例：.101101)" << endl;
+    while (1)
+    {
+        bool flag = false;
+        scanf("%113s", pure_decimal);
+        int len = strlen(pure_decimal);
+        if (pure_decimal[0] != '.')
+        {
+            cout << "不是以.开头，请重输" << endl;
+            continue;
+        }
+        flag = false;
+        for (int i = 1; i < len; ++i)
+        {
+            if (pure_decimal[i] != '0' && pure_decimal[i] != '1')
+            {
+                flag = true;
+                break;
+            }
+        }
+        if (!flag)
+        {
+            cout << endl;
+            break;
+        }
+        else
+            cout << "输入的不是0/1，请重输" << endl;
+    }
+}
+
+// 输出标尺
+// 1 - 上标尺 ; 0 - 下标尺
+void output_rod(const bool is_upper)
+{
+    if (is_upper) // 上标尺
+    {
+        cout << "-----------------------------------------------------------------------------------------------------------------------------------" << endl;
+        cout << "----------- 上标尺  1         2         3         4         5         6         7         8         9         A         B         C" << endl;
+        cout << "-----------123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890" << endl;
+        cout << "-----------------------------------------------------------------------------------------------------------------------------------" << endl;
+    }
+    else // 下标尺
+    {
+        cout << "-----------------------------------------------------------------------------------------------------------------------------------" << endl;
+        cout << "-----------123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890" << endl;
+        cout << "----------- 下标尺  1         2         3         4         5         6         7         8         9         A         B         C" << endl;
+        cout << "-----------------------------------------------------------------------------------------------------------------------------------" << endl;
+    }
+}
+
+int main()
+{
+    /* 说明：首先定义 power_table[113][114]，输出为全0，再进行初始化
+    *
+    *  1、第[0]行整个不用，[1]~[112] 与2^-1 ~ 2^-112 对应，因此需要113行
+    *  2、第[0]列存放幂次，[1]~[112]列依次存放十分位、百分位、千分位、...  （2^-i次方的十进制小数，最多i位），[113]预留，用于某些特殊要求，比如\0
+    *  2、每行的第0列存放幂次，[1]~开始存放十进制的每一位，从而达到高精度存放的目的
+    *     例：        第[0]列  第[1]列  第[2]列  第[3]列  第[4]列 ...
+    *		第[1]行   -1     5        0        0        0		//表示0.5
+    *		第[2]行   -2     2        5        0        0		//表示0.25
+    *		第[3]行   -3     1        2        5        0		//表示0.125
+    *		第[4]行   -4     0        6        2        5		//表示0.0625
+    *			...
+    *		第[112]行 -112   ...
+    *
+    注：1、本二维数组的类型，既可以是int，也可以是char，因为计算时，每个元素的值都在0-9之间，用char足够了（char型输出时注意数字0-9和字符0-9的问题即可）
+        2、因为如此，本题放在数组综合训练中，而没有放在字符数组中
+    */
+    char power_table[N_POW + 1][N_NUM + 1] = { 0 }; // 先全部初始化为0
+    int i;
+    /* 初始化，[0]里面存放幂次，初始化后的结果为：
+       行|列  [0]   [1]   [2]
+       [0]     0     0     0  //本行不用
+       [1]     -1    5     0  // 2^-1 初始化为0.5
+       [2]     -2    0     0
+       ...
+       [112]   -112  0     0
+    */
+    for (i = 1; i <= N_POW; i++)
+        power_table[i][0] = -i; // 幂次 -1 ~ -52
+    power_table[1][1] = 5;      // 2^-1 = 0.5，先置[1][1]为5
+    /* 循环方式计算幂表：
+       1、二维数组带一个下标，表示一个大小为114的一维数组
+       2、2^-1为已知的0.5，power_table[1]的内容为 -1 5 0 0 0 ... 0
+    */
+    for (i = 1; i < N_POW; i++)
+        calc_next(power_table[i], power_table[i + 1]); // 已知2^-i，求2^-(i+1)
+    output_rod(1);                                     // 上标尺
+    for (i = 1; i <= N_POW; i++)
+        output("", power_table[i]); // 输出
+    output_rod(0);                  // 下标尺
+    char pure_decimal[N_NUM + 1] = { 0 };
+    input_pure_decimal(pure_decimal); // 输入一个二进制纯小数
+
+    output_rod(1); // 上标尺
+    output("输入数据 : ", pure_decimal);
+    char out[N_NUM + 1] = { 0 };
+    calc_num(pure_decimal, out, power_table);
+    output("计算值 : 0.", out);
+    /* 下标尺 */
+    output_rod(0);
+    cout << endl;
+    return 0;
+}
+
+/*
+PPT例题的测试数据
+.00110011001100110011010
+*/
