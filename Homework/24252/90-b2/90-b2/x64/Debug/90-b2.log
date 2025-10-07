@@ -1,0 +1,18 @@
+﻿  cmd_console_tools.cpp
+E:\Git\Code\Homework\24252\90-b2\cmd_console_tools.h(52,9): warning C4005: “CURSOR_INVISIBLE”: 宏重定义
+  (编译源文件“cmd_console_tools.cpp”)
+      D:\Windows Kits\10\Include\10.0.26100.0\um\winuser.h(14649,9):
+      参见“CURSOR_INVISIBLE”的前一个定义
+  
+E:\Git\Code\Homework\24252\90-b2\cmd_console_tools.cpp(211,24): warning C4267: “=”: 从“size_t”转换到“int”，可能丢失数据
+  pullze_base.cpp
+  pullze_console.cpp
+E:\Git\Code\Homework\24252\90-b2\cmd_console_tools.h(52,9): warning C4005: “CURSOR_INVISIBLE”: 宏重定义
+  (编译源文件“pullze_console.cpp”)
+      D:\Windows Kits\10\Include\10.0.26100.0\um\winuser.h(14649,9):
+      参见“CURSOR_INVISIBLE”的前一个定义
+  
+  pullze_main.cpp
+  pullze_tools.cpp
+  正在生成代码...
+  90-b2.vcxproj -> E:\Git\Code\Homework\24252\90-b2\x64\Debug\90-b2.exe

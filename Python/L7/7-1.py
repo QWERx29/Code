@@ -7,7 +7,7 @@ import time
 import pandas as pd
 
 options = Options()
-options.add_argument('--headless')  # 无头浏览器
+# options.add_argument('--headless')  # 无头浏览器
 driver = webdriver.Chrome(options=options)
 
 base_url = "https://see.tongji.edu.cn/info/1143/"
@@ -52,7 +52,7 @@ while start_page and start_page not in visited_urls:
                 # 有些新闻页面可能只有“下一条”，没有“上一条”
                 next_href = links[0].get_attribute("href")
             if next_href:
-                if next_href.startswith("http"):
+                if next_href.startswith("https"):
                     start_page = next_href.replace(base_url, "")
                 else:
                     start_page = next_href
