@@ -3,6 +3,7 @@
 #include <conio.h>
 #include "../include/cmd_console_tools.h"
 #include "../include/cmd_hdc_tools.h"
+#include "../include/common_menu.h"
 #include "90-01-b1-hanoi.h"
 
 using namespace std;
@@ -23,6 +24,7 @@ using namespace std;
 
 int main()
 {
+	cct_setconsoletitle("Hanoi 汉诺塔");
 	cout << "请确认当前cmd窗口的大小为40行*120列以上，字体为新宋体/16，按C继续，Q退出" << endl;
 	while (1) {
 		char ch = _getch();

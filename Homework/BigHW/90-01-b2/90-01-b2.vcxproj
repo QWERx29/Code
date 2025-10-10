@@ -140,6 +140,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\common\cmd_console_tools.cpp" />
+    <ClCompile Include="..\common\common_menu.cpp" />
     <ClCompile Include="90-01-b2-pullze_base.cpp" />
     <ClCompile Include="90-01-b2-pullze_console.cpp" />
     <ClCompile Include="90-01-b2-pullze_main.cpp" />
@@ -147,6 +148,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\cmd_console_tools.h" />
+    <ClInclude Include="..\include\common_menu.h" />
     <ClInclude Include="90-01-b2-pullze.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

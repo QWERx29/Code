@@ -30,12 +30,18 @@
     <ClCompile Include="90-01-b2-pullze_tools.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="..\common\common_menu.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="90-01-b2-pullze.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="..\include\cmd_console_tools.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\common_menu.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

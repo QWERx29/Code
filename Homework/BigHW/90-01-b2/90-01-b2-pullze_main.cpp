@@ -3,6 +3,7 @@
 #include<conio.h>
 #include"90-01-b2-pullze.h"
 #include"../include/cmd_console_tools.h"
+#include "../include/common_menu.h"
 using namespace std;
 
 /***************************************************************************
@@ -21,8 +22,8 @@ int main()
 	while (1)
 	{
 		int a, b;
-		a = menu();
-		if (a == 17)
+		a = puzzle_menu();
+		if (a == 0)
 			break;
 		b = size();
 		if (a >= 1 && a <= 11)

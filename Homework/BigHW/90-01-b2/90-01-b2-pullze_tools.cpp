@@ -13,6 +13,7 @@ using namespace std;
   返 回 值：
   说    明：
 ***************************************************************************/
+/*
 int menu()
 {
 	cct_cls();
@@ -50,7 +51,7 @@ int menu()
 	op = toupper(op);
 	return op - 'A' + 1;
 }
-
+*/
 int size()
 {
 	cct_cls();

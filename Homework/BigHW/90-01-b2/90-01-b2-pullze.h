@@ -2,8 +2,7 @@
 
 #pragma once
 
-/* 提示：空文件，仅为了提醒你不要忘记首行 && 不要把文件名弄错 */
-int menu();
+/* 提示：空文件，仅为了提醒你不要忘记首行 && 不要把文件名弄错 *///int menu();
 int size();
 void wait(int op);
 
