@@ -376,59 +376,60 @@ void output3(int n, char src, char dst)
 }
 
 /***************************************************************************
-  函数名称：output4
+  函数名称：print_towerbase
   功    能：打印塔底与塔柱
   输入参数：
   返 回 值：
   说    明：
 ***************************************************************************/
-void output4(int n, char src, char dst, int op)
+void print_towerbase(int n, char src, char dst, int op)
 {
+    const int   win_width = 1400, win_high = 900;	//设定屏幕宽度
+    const int   win_bgcolor = 0, win_fgcolor = 14;
+    const int   color[] = { 0x00FF0000, 0x0000FF00, 0x000000FF }; //R G B
+    hdc_init(win_bgcolor, win_fgcolor, win_width, win_high);		//用(背景色，前景色，宽度，高度）初始化窗口
+    hdc_cls();
     cct_cls();
     cct_setcursor(CCT_CURSOR_INVISIBLE);
     if (op >= 6 && op <= 9)
         output3_init(n, src, dst, op);
     else
         cct_gotoxy(0, 30);
-    const int   win_width = 1400, win_high = 900;	//设定屏幕宽度
-    const int   win_bgcolor = 7, win_fgcolor = 0;
-    const int   color[] = { 0x00FF0000, 0x0000FF00, 0x000000FF }; //R G B
-    hdc_init(win_bgcolor, win_fgcolor, win_width, win_high);		//用(背景色，前景色，宽度，高度）初始化窗口
-    hdc_cls();
-    if (1)
+    Sleep(30);
+    for (int i = 0; i < 3; i++)
     {
-        for (int i = 0; i < 3; i++)
-        {
-            int Unst_x = HDC_Start_X + i * HDC_Underpan_Distance + 23 * i * HDC_Base_Width;
-            int Unst_y = HDC_Start_Y;
-            int Unst_w = 23 * HDC_Base_Width, Unst_h = HDC_Base_High;
-            hdc_rectangle(Unst_x, Unst_y, Unst_w, Unst_h, HDC_COLOR[11]);
-            Sleep(HDC_Init_Delay);
-
-        }
-        for (int i = 0; i < 3; i++)
-        {
-            int Upst_x = HDC_Start_X + 11 * HDC_Base_Width + i * HDC_Underpan_Distance + 23 * i * HDC_Base_Width;
-            int Upst_y = HDC_Start_Y - 12 * HDC_Base_High;
-            int Upst_w = HDC_Base_Width, Upst_h = 12 * HDC_Base_High;
-            hdc_rectangle(Upst_x, Upst_y, Upst_w, Upst_h, HDC_COLOR[11]);
-            Sleep(HDC_Init_Delay);
-        }
+        int Unst_x = HDC_Start_X + i * HDC_Underpan_Distance + 23 * i * HDC_Base_Width;
+        int Unst_y = HDC_Start_Y;
+        int Unst_w = 23 * HDC_Base_Width, Unst_h = HDC_Base_High;
+        hdc_rectangle(Unst_x, Unst_y, Unst_w, Unst_h, 0, true, 1, HDC_COLOR[11]);
+        Sleep(HDC_Init_Delay);
+    }
+    for (int i = 0; i < 3; i++)
+    {
+        int Upst_x = HDC_Start_X + 11 * HDC_Base_Width + i * HDC_Underpan_Distance + 23 * i * HDC_Base_Width;
+        int Upst_y = HDC_Start_Y - 12 * HDC_Base_High;
+        int Upst_w = HDC_Base_Width, Upst_h = 12 * HDC_Base_High;
+        hdc_rectangle(Upst_x, Upst_y, Upst_w, Upst_h, 0, true, 1, HDC_COLOR[11]);
+        Sleep(HDC_Init_Delay);
     }
 }
-void output5(int n, char src, char dst, int op)
+/***************************************************************************
+  函数名称：print_plates
+  功    能：打印初始盘子
+  输入参数：
+  返 回 值：
+  说    明：
+***************************************************************************/
+void print_plates(int n, char src, char dst, int op)
 {
-    output4(n, src, dst, op);
-    if (1)
+    print_towerbase(n, src, dst, op);
+    for (int i = n; i >= 1; i--)
     {
-        for (int i = n; i >= 1; i--)
-        {
-            int pl_w = (2 * i + 1) * HDC_Base_Width, pl_h = HDC_Base_High;
-            int pl_x = HDC_Start_X + (src - 'A') * (23 * HDC_Base_Width + HDC_Underpan_Distance) + (11 - i) * HDC_Base_Width;
-            int pl_y = HDC_Start_Y - (n + 1 - i) * HDC_Base_High;
-            hdc_rectangle(pl_x, pl_y, pl_w, pl_h, HDC_COLOR[i]);
-            Sleep(HDC_Init_Delay);
-        }
+        int pl_w = (2 * i + 1) * HDC_Base_Width, pl_h = HDC_Base_High;
+        int pl_x = HDC_Start_X + (src - 'A') * (23 * HDC_Base_Width + HDC_Underpan_Distance) + (11 - i) * HDC_Base_Width;
+        int pl_y = HDC_Start_Y - (n + 1 - i) * HDC_Base_High;
+        hdc_rectangle(pl_x, pl_y, pl_w, pl_h, 0, true, 1, HDC_COLOR[i]);
+        Sleep(HDC_Init_Delay);
     }
 }
 void output6(int n, char src, char dst, int md)
@@ -460,104 +461,43 @@ void output6(int n, char src, char dst, int md)
     int Dstx = HDC_Start_X + 11 * HDC_Base_Width + (dst - 'A') * HDC_Underpan_Distance + 23 * (dst - 'A') * HDC_Base_Width;
     int Stty = Sty - HDC_Base_High;
     int Sttw = HDC_Base_Width, Stth = HDC_Base_High;
-    if (1)
+    // 上移
+    for (int CurY = Sty - HDC_Step_Y; CurY >= HDC_Top_Y; CurY -= HDC_Step_Y)
     {
-        // 上移
-        for (int CurY = Sty - HDC_Step_Y; CurY >= HDC_Top_Y; CurY -= HDC_Step_Y)
+        hdc_rectangle(Stx, CurY + HDC_Base_High, Stw, HDC_Step_Y, 0, true, 1, HDC_COLOR[0]);
+        if ((CurY + HDC_Base_High) >= (HDC_Start_Y - 12 * HDC_Base_High))
+            hdc_rectangle(Sttx, CurY + HDC_Base_High, Sttw, HDC_Step_Y, 0, true, 1, HDC_COLOR[11]);
+        else
+            hdc_rectangle(Stx, CurY + HDC_Base_High, Stw, HDC_Step_Y, 0, true, 1, HDC_COLOR[0]);
+        hdc_rectangle(Stx, CurY, Stw, Sth, 0, true, 1, HDC_COLOR[n]);
+        if (delay == 0)
         {
-            hdc_rectangle(Stx, CurY + HDC_Base_High, Stw, HDC_Step_Y, HDC_COLOR[0]);
-            if ((CurY + HDC_Base_High) >= (HDC_Start_Y - 12 * HDC_Base_High))
-                hdc_rectangle(Sttx, CurY + HDC_Base_High, Sttw, HDC_Step_Y, HDC_COLOR[11]);
-            else
-                hdc_rectangle(Stx, CurY + HDC_Base_High, Stw, HDC_Step_Y, HDC_COLOR[0]);
-            hdc_rectangle(Stx, CurY, Stw, Sth, HDC_COLOR[n]);
-            if (delay == 0)
-            {
-                if (md == 1)
-                    if (cnt <= 8)
-                        while (_getch() != '\r')
-                            ;
-                if (md == 0)
+            if (md == 1)
+                if (cnt <= 8)
                     while (_getch() != '\r')
                         ;
-                if (md == 2)
-                    Sleep(5);
-            }
-            else
-            {
-                if (md == 1 || md == 2)
-                    if (cnt <= 8)
-                        Sleep(delay);
-                if (md == 0)
-                    Sleep(delay);
-            }
-        }
-        // 平移
-        if (dst > src)
-        {
-            for (int CurX = Stx - HDC_Step_X; CurX <= Stx + (dst - src) * (HDC_Underpan_Distance + 23 * HDC_Base_Width); CurX += HDC_Step_X)
-            {
-                hdc_rectangle(CurX - HDC_Step_X, HDC_Top_Y, HDC_Step_X, Sth, HDC_COLOR[0]);
-                hdc_rectangle(CurX, HDC_Top_Y, Stw, Sth, HDC_COLOR[n]);
-                if (delay == 0)
-                {
-                    if (md == 1)
-                        if (cnt <= 8)
-                            while (_getch() != '\r')
-                                ;
-                    if (md == 0)
-                        while (_getch() != '\r')
-                            ;
-                    if (md == 2)
-                        Sleep(5);
-                }
-                else
-                {
-                    if (md == 1 || md == 2)
-                        if (cnt <= 8)
-                            Sleep(delay);
-                    if (md == 0)
-                        Sleep(delay);
-                }
-            }
+            if (md == 0)
+                while (_getch() != '\r')
+                    ;
+            if (md == 2)
+                Sleep(5);
         }
         else
         {
-            for (int CurX = Stx - HDC_Step_X; CurX >= Stx - (src - dst) * (HDC_Underpan_Distance + 23 * HDC_Base_Width); CurX -= HDC_Step_X)
-            {
-                hdc_rectangle(CurX + Stw, HDC_Top_Y, HDC_Step_X, Sth, HDC_COLOR[0]);
-                hdc_rectangle(CurX, HDC_Top_Y, Stw, Sth, HDC_COLOR[n]);
-                if (delay == 0)
-                {
-                    if (md == 1)
-                        if (cnt <= 8)
-                            while (_getch() != '\r')
-                                ;
-                    if (md == 0)
-                        while (_getch() != '\r')
-                            ;
-                    if (md == 2)
-                        Sleep(5);
-                }
-                else
-                {
-                    if (md == 1 || md == 2)
-                        if (cnt <= 8)
-                            Sleep(delay);
-                    if (md == 0)
-                        Sleep(delay);
-                }
-            }
+            if (md == 1 || md == 2)
+                if (cnt <= 8)
+                    Sleep(delay);
+            if (md == 0)
+                Sleep(delay);
         }
-        // 下移
-        for (int CurY = HDC_Top_Y; CurY <= Dsy; CurY += HDC_Step_Y)
+    }
+    // 平移
+    if (dst > src)
+    {
+        for (int CurX = Stx - HDC_Step_X; CurX <= Stx + (dst - src) * (HDC_Underpan_Distance + 23 * HDC_Base_Width); CurX += HDC_Step_X)
         {
-            hdc_rectangle(Dsx, CurY - HDC_Step_Y, Stw, HDC_Step_Y, HDC_COLOR[0]);
-            if ((CurY + HDC_Base_High) >= (HDC_Start_Y - 11 * HDC_Base_High))
-                hdc_rectangle(Dstx, CurY - HDC_Step_Y, Sttw, HDC_Step_Y, HDC_COLOR[11]);
-            else
-                hdc_rectangle(Dsx, CurY - HDC_Step_Y, Stw, HDC_Step_Y, HDC_COLOR[0]);
-            hdc_rectangle(Dsx, CurY, Stw, Sth, HDC_COLOR[n]);
+            hdc_rectangle(CurX - HDC_Step_X, HDC_Top_Y, HDC_Step_X, Sth, 0, true, 1, HDC_COLOR[0]);
+            hdc_rectangle(CurX, HDC_Top_Y, Stw, Sth, 0, true, 1, HDC_COLOR[n]);
             if (delay == 0)
             {
                 if (md == 1)
@@ -578,6 +518,64 @@ void output6(int n, char src, char dst, int md)
                 if (md == 0)
                     Sleep(delay);
             }
+        }
+    }
+    else
+    {
+        for (int CurX = Stx - HDC_Step_X; CurX >= Stx - (src - dst) * (HDC_Underpan_Distance + 23 * HDC_Base_Width); CurX -= HDC_Step_X)
+        {
+            hdc_rectangle(CurX + Stw, HDC_Top_Y, HDC_Step_X, Sth, 0, true, 1, HDC_COLOR[0]);
+            hdc_rectangle(CurX, HDC_Top_Y, Stw, Sth, 0, true, 1, HDC_COLOR[n]);
+            if (delay == 0)
+            {
+                if (md == 1)
+                    if (cnt <= 8)
+                        while (_getch() != '\r')
+                            ;
+                if (md == 0)
+                    while (_getch() != '\r')
+                        ;
+                if (md == 2)
+                    Sleep(5);
+            }
+            else
+            {
+                if (md == 1 || md == 2)
+                    if (cnt <= 8)
+                        Sleep(delay);
+                if (md == 0)
+                    Sleep(delay);
+            }
+        }
+    }
+    // 下移
+    for (int CurY = HDC_Top_Y; CurY <= Dsy; CurY += HDC_Step_Y)
+    {
+        hdc_rectangle(Dsx, CurY - HDC_Step_Y, Stw, HDC_Step_Y, 0, true, 1, HDC_COLOR[0]);
+        if ((CurY + HDC_Base_High) >= (HDC_Start_Y - 11 * HDC_Base_High))
+            hdc_rectangle(Dstx, CurY - HDC_Step_Y, Sttw, HDC_Step_Y, 0, true, 1, HDC_COLOR[11]);
+        else
+            hdc_rectangle(Dsx, CurY - HDC_Step_Y, Stw, HDC_Step_Y, 0, true, 1, HDC_COLOR[0]);
+        hdc_rectangle(Dsx, CurY, Stw, Sth, 0, true, 1, HDC_COLOR[n]);
+        if (delay == 0)
+        {
+            if (md == 1)
+                if (cnt <= 8)
+                    while (_getch() != '\r')
+                        ;
+            if (md == 0)
+                while (_getch() != '\r')
+                    ;
+            if (md == 2)
+                Sleep(5);
+        }
+        else
+        {
+            if (md == 1 || md == 2)
+                if (cnt <= 8)
+                    Sleep(delay);
+            if (md == 0)
+                Sleep(delay);
         }
     }
 }

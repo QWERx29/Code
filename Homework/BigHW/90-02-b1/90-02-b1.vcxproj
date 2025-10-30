@@ -140,10 +140,19 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\common\cmd_console_tools.cpp" />
-    <ClCompile Include="90-02-b1-main.cpp" />
+    <ClCompile Include="..\common\cmd_hdc_tools.cpp" />
+    <ClCompile Include="1234567-测试-hdc_cartoon.cpp" />
+    <ClCompile Include="1234567-测试-hdc_math.cpp" />
+    <ClCompile Include="hdc_cartoon.cpp" />
+    <ClCompile Include="hdc_math.cpp" />
+    <ClCompile Include="test_draw_peppapig.cpp" />
+    <ClCompile Include="test_hdc.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\cmd_console_tools.h" />
+    <ClInclude Include="..\include\cmd_hdc_tools.h" />
+    <ClInclude Include="..\include\lib_thdc_tools.h" />
+    <ClInclude Include="hdc_student_works.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

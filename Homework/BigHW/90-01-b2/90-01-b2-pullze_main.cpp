@@ -3,7 +3,7 @@
 #include<conio.h>
 #include"90-01-b2-pullze.h"
 #include"../include/cmd_console_tools.h"
-#include "../include/common_menu.h"
+#include "../include/simple_menu.h"
 using namespace std;
 
 /***************************************************************************

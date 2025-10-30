@@ -1,0 +1,158 @@
+#include <iostream>
+#include <deque>
+#include <vector>
+#include <string>
+#include <sstream>
+#include <climits>
+
+using namespace std;
+
+class MaxQueue
+{
+private:
+    deque<int> data_queue; // 存储实际数据的队列
+    deque<int> max_queue;  // 存储当前最大值的双端队列
+    int capacity;          // 队列容量
+    int count;             // 当前元素个数
+
+public:
+    MaxQueue(int n) : capacity(n), count(0) {}
+
+    // 入队操作
+    bool enqueue(int value)
+    {
+        if (count >= capacity)
+        {
+            return false; // 队列已满
+        }
+
+        // 维护max_queue：移除所有小于当前值的元素
+        while (!max_queue.empty() && max_queue.back() < value)
+        {
+            max_queue.pop_back();
+        }
+        max_queue.push_back(value);
+
+        data_queue.push_back(value);
+        count++;
+        return true;
+    }
+
+    // 出队操作
+    bool dequeue(int &value)
+    {
+        if (count <= 0)
+        {
+            return false; // 队列为空
+        }
+
+        value = data_queue.front();
+        data_queue.pop_front();
+
+        // 如果出队的元素是当前最大值，也从max_queue中移除
+        if (value == max_queue.front())
+        {
+            max_queue.pop_front();
+        }
+
+        count--;
+        return true;
+    }
+
+    // 获取最大值
+    bool getMax(int &value)
+    {
+        if (count <= 0)
+        {
+            return false; // 队列为空
+        }
+
+        value = max_queue.front();
+        return true;
+    }
+
+    // 获取队列中所有元素
+    vector<int> getAllElements()
+    {
+        vector<int> result;
+        for (int elem : data_queue)
+        {
+            result.push_back(elem);
+        }
+        return result;
+    }
+
+    // 获取当前元素个数
+    int getCount() const
+    {
+        return count;
+    }
+};
+
+int main()
+{
+    int n;
+    cin >> n;
+    cin.ignore(); // 忽略换行符
+
+    MaxQueue queue(n);
+    string line;
+
+    while (getline(cin, line))
+    {
+        if (line == "quit")
+        {
+            // 输出队列中所有元素
+            vector<int> elements = queue.getAllElements();
+            if (!elements.empty())
+            {
+                cout << elements[0];
+                for (int i = 1; i < elements.size(); i++)
+                {
+                    cout << " " << elements[i];
+                }
+            }
+            cout << endl;
+            break;
+        }
+        else if (line == "dequeue")
+        {
+            int value;
+            if (queue.dequeue(value))
+            {
+                cout << value << endl;
+            }
+            else
+            {
+                cout << "Queue is Empty" << endl;
+            }
+        }
+        else if (line == "max")
+        {
+            int value;
+            if (queue.getMax(value))
+            {
+                cout << value << endl;
+            }
+            else
+            {
+                cout << "Queue is Empty" << endl;
+            }
+        }
+        else if (line.find("enqueue") == 0)
+        {
+            // 解析enqueue命令
+            stringstream ss(line);
+            string cmd;
+            int value;
+            ss >> cmd >> value;
+
+            if (!queue.enqueue(value))
+            {
+                cout << "Queue is Full" << endl;
+            }
+        }
+    }
+
+    return 0;
+}

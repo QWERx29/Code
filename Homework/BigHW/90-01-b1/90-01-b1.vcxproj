@@ -141,14 +141,14 @@
   <ItemGroup>
     <ClCompile Include="..\common\cmd_console_tools.cpp" />
     <ClCompile Include="..\common\cmd_hdc_tools.cpp" />
-    <ClCompile Include="..\common\common_menu.cpp" />
+    <ClCompile Include="..\common\simple_menu.cpp" />
     <ClCompile Include="90-01-b1-hanoi_main.cpp" />
     <ClCompile Include="90-01-b1-hanoi_multiple_solutions.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\cmd_console_tools.h" />
     <ClInclude Include="..\include\cmd_hdc_tools.h" />
-    <ClInclude Include="..\include\common_menu.h" />
+    <ClInclude Include="..\include\simple_menu.h" />
     <ClInclude Include="90-01-b1-hanoi.h" />
     <ClInclude Include="90-01-b1-hanoi_const_value.h" />
   </ItemGroup>

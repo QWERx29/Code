@@ -5,18 +5,61 @@
 #include "../include/cmd_console_tools.h"
 using namespace std;
 
-/* ----------------------------------------------------------------------------------
+/***************************************************************************
+函数名称：select_op
+功    能：
+输入参数：
+返 回 值：对应选项
+说    明：
+***************************************************************************/
+int select_op(const char* valid_chars)
+{
+	while (1)
+	{
+		char op = _getch();
+		for (int i = 0; valid_chars[i] != '\0'; i++)
+		{
+			if (op == valid_chars[i] || op == tolower(valid_chars[i]))
+			{
+# if 1
+				cout << op;
+# endif
+				return op;
+			}
+		}
+	}
+}
 
-	 本文件功能：
-	1、放被 hanoi_main.cpp 调用的菜单函数，要求显示各菜单项，读入正确的选项后返回
+// 输出菜单测试
+// simple_menu函数，支持三种菜单形式
+char simple_menu(const char* menu_items, const char* valid_chars)
+{
+	cout << menu_items << endl;
+	char op = select_op(valid_chars);
+	cout << op << endl;
+	return op;
+}
 
-	 本文件要求：
-	1、不允许定义外部全局变量（const及#define不在限制范围内）
-	2、不允许定义静态全局变量（全局变量的使用准则是：少用、慎用、能不用尽量不用）
-	3、静态局部变量的数量不限制，但使用准则也是：少用、慎用、能不用尽量不用
-	4、按需加入系统头文件、自定义头文件、命名空间等
+// 重载版本：处理一维字符指针数组（以NULL结束）
+char simple_menu(const char* menu_items[], const char* valid_chars)
+{
+	for (int i = 0; menu_items[i] != NULL; i++)
+		cout << menu_items[i] << endl;
+	char op = select_op(valid_chars);
+	cout << op << endl;
+	return op;
+}
 
-   ----------------------------------------------------------------------------------- */
+// 重载版本：处理二维字符数组（以空串""结束）
+char simple_menu(const char menu_items[][80], const char* valid_chars)
+{
+	for (int i = 0; menu_items[i][0] != '\0'; i++)
+		cout << menu_items[i] << endl;
+	char op = select_op(valid_chars);
+	cout << op << endl;
+	return op;
+}
+
 
 // 汉诺塔菜单提示词
 const char* hanoi_menus[] = {
@@ -72,27 +115,12 @@ void display_menu(const char* menus[])
 			cout << endl;
 	}
 }
-/***************************************************************************
-函数名称：select_op
-功    能：
-输入参数：
-返 回 值：对应选项
-说    明：
-***************************************************************************/
-int select_op(const char* valid_chars)
+void init()
 {
-	while (1) 
-	{
-		char op = _getch();
-		for (int i = 0; valid_chars[i] != '\0'; i++) 
-		{
-			if (op == valid_chars[i] || op == tolower(valid_chars[i])) 
-			{
-				//cout << op;
-				return toupper(op);
-			}
-		}
-	}
+	cct_cls();
+	cct_setfontsize("新宋体", 16, 8);
+	cct_setcursor(CCT_CURSOR_VISIBLE_NORMAL);
+	cct_setconsoleborder(120, 40, 120, 9001);
 }
 /***************************************************************************
 函数名称：hanoi_menu
@@ -103,23 +131,19 @@ int select_op(const char* valid_chars)
 ***************************************************************************/
 int hanoi_menu()
 {
-	cct_cls();
-	cct_setfontsize("新宋体", 16, 8);
-	cct_setcursor(CCT_CURSOR_VISIBLE_NORMAL);
-	cct_setconsoleborder(120, 40, 120, 9001);
+	init();
 	display_menu(hanoi_menus);
-	char op = select_op("0123456789");
+	char op;
+	if(1)
+		op = toupper(select_op("0123456789"));
 	return op - '0';
 }
 
 int puzzle_menu()
 {
-	cct_cls();
-	cct_setfontsize("新宋体", 16, 8);
-	cct_setcursor(CCT_CURSOR_VISIBLE_NORMAL);
-	cct_setconsoleborder(120, 40, 120, 9001);
+	init();
 	display_menu(puzzle_menus);
-	char op = select_op("ABCDEFGHIJKQ");
+	char op = toupper(select_op("ABCDEFGHIJKQ"));
 	if (op == 'Q') return 0;
 	return op - 'A' + 1;
 }

@@ -21,7 +21,7 @@
     <ClInclude Include="cmd_hdc_tools.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="common_menu.h">
+    <ClInclude Include="simple_menu.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

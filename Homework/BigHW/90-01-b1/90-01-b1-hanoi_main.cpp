@@ -3,7 +3,7 @@
 #include <conio.h>
 #include "../include/cmd_console_tools.h"
 #include "../include/cmd_hdc_tools.h"
-#include "../include/common_menu.h"
+#include "../include/simple_menu.h"
 #include "90-01-b1-hanoi.h"
 
 using namespace std;
@@ -33,10 +33,10 @@ int main()
 		if (ch == 'Q' || ch == 'q')
 			return 0;
 	}
-	const int   win_width = 1400, win_high = 900;	//设定屏幕宽度
-	const int   win_bgcolor = 7, win_fgcolor = 0;
-	const int   color[] = { 0x00FF0000, 0x0000FF00, 0x000000FF }; //R G B
-	hdc_init(win_bgcolor, win_fgcolor, win_width, win_high);		//用(背景色，前景色，宽度，高度）初始化窗口
+	const int   win_width = 1400, win_high = 900;	// 设定屏幕宽度
+	const int   win_bgcolor = 0, win_fgcolor = 14;  // 设定背景色和前景色
+	const int   color[] = { 0x00FF0000, 0x0000FF00, 0x000000FF }; // R G B
+	hdc_init(win_bgcolor, win_fgcolor, win_width, win_high);		// 用(背景色，前景色，宽度，高度）初始化窗口
 	hdc_cls();
 	int n = 0;
 	char src = 0, tmp = 0, dst = 0;
@@ -55,11 +55,11 @@ int main()
 			hanoi(n, src, tmp, dst, op);
 		}
 		else if (op == 5)
-			output4(5, 'A', 'A', op);
+			print_towerbase(5, 'A', 'A', op);
 		else if (op >= 6 && op <= 9)
 		{
 			input(&n, &src, &tmp, &dst, op);
-			output5(n, src, dst, op);
+			print_plates(n, src, dst, op);
 			if (op >= 7 && op <= 8)
 				hanoi(n, src, tmp, dst, op);
 			else if (op == 9)

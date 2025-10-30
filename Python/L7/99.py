@@ -17,8 +17,8 @@ import urllib3
 # ------------------- 全局 SSL 验证关闭 -------------------
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-START_ID = 56460
-END_ID = 56483  # 包含
+START_ID = 56500
+END_ID = 56519 # 包含 MAX = 56503
 BASE = "https://zwfw.spb.gov.cn/gjj/pfyycsml/pfyycsmlDetail?uuid={id}"
 
 HEADERS = {
@@ -29,7 +29,6 @@ HEADERS = {
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
     "Connection": "keep-alive",
 }
-
 CHECKPOINT_CSV = "spb_post_outlets_checkpoint.csv"
 FINAL_XLSX = "spb_post_outlets.xlsx"
 LOG_FILE = "spb_post_outlets.log"
