@@ -1,3 +1,4 @@
+#define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -21,7 +22,7 @@ int main()
     struct student *new_node = NULL;
 
     int temp_no, temp_score;
-    char temp_name[100]; // 临时缓冲区读取姓名
+    char temp_name[100];
 
     while (1)
     {

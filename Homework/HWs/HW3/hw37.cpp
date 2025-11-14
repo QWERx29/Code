@@ -1,21 +1,20 @@
 #include <iostream>
-#include <string>
 #include <stack>
 #include <map>
 #include <vector>
-#include <cmath>
-#include <functional>
+#include <string>
+#include <cctype>
+#include <algorithm>
 using namespace std;
 
-struct TreeNode
+struct Node
 {
     char val;
-    TreeNode *left;
-    TreeNode *right;
-    TreeNode(char x) : val(x), left(nullptr), right(nullptr) {}
+    Node *left, *right;
+    Node(char c) : val(c), left(NULL), right(NULL) {}
 };
 
-int getPriority(char op)
+int priority(char op)
 {
     if (op == '+' || op == '-')
         return 1;
@@ -24,13 +23,13 @@ int getPriority(char op)
     return 0;
 }
 
-string infixToPostfix(const string &infix)
+string infixToPostfix(const string &expr)
 {
     stack<char> st;
     string postfix;
-
-    for (char c : infix)
+    for (int i = 0; i < (int)expr.size(); i++)
     {
+        char c = expr[i];
         if (isalpha(c))
             postfix += c;
         else if (c == '(')
@@ -46,7 +45,7 @@ string infixToPostfix(const string &infix)
         }
         else
         {
-            while (!st.empty() && getPriority(st.top()) >= getPriority(c))
+            while (!st.empty() && priority(st.top()) >= priority(c))
             {
                 postfix += st.top();
                 st.pop();
@@ -54,145 +53,121 @@ string infixToPostfix(const string &infix)
             st.push(c);
         }
     }
-
     while (!st.empty())
     {
         postfix += st.top();
         st.pop();
     }
-
     return postfix;
 }
 
-TreeNode *buildExpressionTree(const string &postfix)
+Node *buildTree(const string &postfix)
 {
-    stack<TreeNode *> st;
-
-    for (char c : postfix)
+    stack<Node *> st;
+    for (int i = 0; i < (int)postfix.size(); i++)
     {
-        TreeNode *node = new TreeNode(c);
-
+        char c = postfix[i];
         if (isalpha(c))
-            st.push(node);
+            st.push(new Node(c));
         else
         {
-            node->right = st.top();
+            Node *r = st.top();
             st.pop();
-            node->left = st.top();
+            Node *l = st.top();
             st.pop();
-            st.push(node);
+            Node *p = new Node(c);
+            p->left = l;
+            p->right = r;
+            st.push(p);
         }
     }
-
     return st.top();
 }
 
-void postorderTraversal(TreeNode *root, string &result)
-{
-    if (!root)
-        return;
-    postorderTraversal(root->left, result);
-    postorderTraversal(root->right, result);
-    result += root->val;
-}
-
-int evaluate(TreeNode *root, const map<char, int> &values)
+int height(Node *root)
 {
     if (!root)
         return 0;
+    int hl = height(root->left);
+    int hr = height(root->right);
+    return (hl > hr ? hl : hr) + 1;
+}
 
+void draw(Node *t, vector<string> &canvas, int depth, int l, int r)
+{
+    if (!t)
+        return;
+    int mid = (l + r) / 2;
+    canvas[depth * 2][mid] = t->val;
+    if (t->left)
+    {
+        canvas[depth * 2 + 1][mid - 1] = '/';
+        draw(t->left, canvas, depth + 1, l, mid - 1);
+    }
+    if (t->right)
+    {
+        canvas[depth * 2 + 1][mid + 1] = '\\';
+        draw(t->right, canvas, depth + 1, mid + 1, r);
+    }
+}
+
+void drawTree(Node *root)
+{
+    int h = height(root);
+    int w = (1 << h) - 1;
+    vector<string> canvas(2 * h - 1, string(w, ' '));
+    draw(root, canvas, 0, 0, w - 1);
+    for (int i = 0; i < (int)canvas.size(); i++)
+    {
+        int end = (int)canvas[i].find_last_not_of(' ');
+        if (end != string::npos)
+            cout << canvas[i].substr(0, end + 1) << endl;
+    }
+}
+
+int eval(Node *root, map<char, int> &val)
+{
+    if (!root)
+        return 0;
     if (isalpha(root->val))
-        return values.at(root->val);
-    int leftVal = evaluate(root->left, values);
-    int rightVal = evaluate(root->right, values);
-
+        return val[root->val];
+    int L = eval(root->left, val);
+    int R = eval(root->right, val);
     switch (root->val)
     {
     case '+':
-        return leftVal + rightVal;
+        return L + R;
     case '-':
-        return leftVal - rightVal;
+        return L - R;
     case '*':
-        return leftVal * rightVal;
+        return L * R;
     case '/':
-        return leftVal / rightVal;
-    default:
-        return 0;
+        return L / R;
     }
-}
-
-int getHeight(TreeNode *root)
-{
-    if (!root)
-        return 0;
-    return max(getHeight(root->left), getHeight(root->right)) + 1;
-}
-
-void printTree(TreeNode *root)
-{
-    if (!root)
-        return;
-
-    int height = getHeight(root);
-    int totalRows = 2 * height - 1;
-    int totalCols = (1 << height) - 1;
-
-    vector<vector<char>> grid(totalRows, vector<char>(totalCols, ' '));
-    function<void(TreeNode *, int, int, int)> fillGrid = [&](TreeNode *node, int row, int col, int gap)
-    {
-        if (!node)
-            return;
-        grid[row][col] = node->val;
-
-        if (node->left)
-        {
-            grid[row + 1][col - gap / 2] = '/';
-            fillGrid(node->left, row + 2, col - gap, gap / 2);
-        }
-
-        if (node->right)
-        {
-            grid[row + 1][col + gap / 2] = '\\';
-            fillGrid(node->right, row + 2, col + gap, gap / 2);
-        }
-    };
-    int startCol = totalCols / 2;
-    int initialGap = (1 << (height - 2));
-    fillGrid(root, 0, startCol, initialGap);
-    for (int i = 0; i < totalRows; i++)
-    {
-        string line;
-        for (int j = 0; j < totalCols; j++)
-            line += grid[i][j];
-        while (!line.empty() && line.back() == ' ')
-            line.pop_back();
-        if (!line.empty())
-            cout << line << endl;
-    }
+    return 0;
 }
 
 int main()
 {
-    string infix;
+    string expr;
+    getline(cin, expr);
     int n;
-
-    cin >> infix;
     cin >> n;
-
-    map<char, int> values;
+    map<char, int> val;
     for (int i = 0; i < n; i++)
     {
-        char var;
-        int value;
-        cin >> var >> value;
-        values[var] = value;
+        char c;
+        int x;
+        cin >> c >> x;
+        val[c] = x;
     }
-    string postfix = infixToPostfix(infix);
-    cout << postfix << endl;
-    TreeNode *root = buildExpressionTree(postfix);
-    printTree(root);
-    int result = evaluate(root, values);
-    cout << result << endl;
 
+    string postfix = infixToPostfix(expr);
+    cout << postfix << endl;
+
+    Node *root = buildTree(postfix);
+    drawTree(root);
+
+    cout << eval(root, val) << endl;
     return 0;
 }

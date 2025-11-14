@@ -3,38 +3,41 @@ using namespace std;
 
 int main()
 {
-    string s;
     int caseNo = 1;
-    while (cin >> s)
+    while (1)
     {
-        if (s[0] == '#')
+        string s;
+        getline(cin, s);
+        if (s == "#")
             break;
         int depth1 = 0, max1 = 0;
         int depth2 = 0, max2 = 0;
-        char prev = 0;
-
+        vector<pair<int, int>> stack;
         for (char c : s)
         {
+
             if (c == 'd')
             {
                 depth1++;
                 max1 = max(max1, depth1);
 
-                if (prev == 'u')
-                    depth2 += 2;
-                else
-                    depth2 += 1;
+                depth2++;
                 max2 = max(max2, depth2);
+                stack.push_back({depth1, depth2});
             }
             else if (c == 'u')
             {
                 depth1--;
-                depth2--;
+                if (!stack.empty())
+                {
+                    depth2 = stack.back().second;
+                    stack.pop_back();
+                }
+                else
+                    depth2 = 0;
             }
-            prev = c;
         }
-
-        cout << "Tree " << caseNo++ << ": " << max1 << " => " << max2 << "\n\n";
+        cout << "Tree " << caseNo++ << ": " << max1 << " => " << max2 << endl;
     }
     return 0;
 }

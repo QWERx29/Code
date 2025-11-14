@@ -24,5 +24,11 @@
     <ClInclude Include="simple_menu.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="class_aat.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="lib_aat_tools.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

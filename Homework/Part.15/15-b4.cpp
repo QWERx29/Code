@@ -1,3 +1,4 @@
+#define _CRT_SECURE_NO_WARNINGS
 #include <iostream>
 #include <fstream>
 #include <cstdlib>
@@ -12,40 +13,6 @@ struct Student
     char *name;
     char *school;
 };
-
-bool init(const char *filename, int &N, int &M, Student *&students);
-bool output(const char *filename, int N, Student *selectedStudents);
-void select(int N, int M, Student *students, Student *&selectedStudents);
-void release(int M, Student *students, int N, Student *selectedStudents);
-char *copyString(const char *source);
-
-int main()
-{
-    int N, M;
-    Student *students = nullptr;
-    Student *selectedStudents = nullptr;
-
-    cout << "读取待抽签名单...";
-
-    if (!init("stulist.txt", N, M, students))
-    {
-        cout << "读取数据失败！" << endl;
-        return -1;
-    }
-    cout << "完成" << endl;
-    cout << "正在抽签...";
-    select(N, M, students, selectedStudents);
-    if (output("result.txt", N, selectedStudents))
-        cout << "完成" << endl;
-    else
-    {
-        cout << "写入结果失败！" << endl;
-        release(M, students, N, selectedStudents);
-        return -1;
-    }
-    release(M, students, N, selectedStudents);
-    return 0;
-}
 
 char *copyString(const char *source)
 {
@@ -65,7 +32,7 @@ bool init(const char *filename, int &N, int &M, Student *&students)
 {
     ifstream fin(filename);
     if (!fin.is_open())
-        return -1;
+        return false;
 
     fin >> N >> M;
     fin.ignore();
@@ -73,7 +40,7 @@ bool init(const char *filename, int &N, int &M, Student *&students)
     if (students == nullptr)
     {
         fin.close();
-        return -1;
+        return false;
     }
     for (int i = 0; i < M; i++)
     {
@@ -89,7 +56,7 @@ bool init(const char *filename, int &N, int &M, Student *&students)
         if (!fin.getline(line_buffer, BUFFER_SIZE))
         {
             fin.close();
-            return -1;
+            return false;
         }
 
         char *id_start = line_buffer;
@@ -100,7 +67,7 @@ bool init(const char *filename, int &N, int &M, Student *&students)
         if (name_start == nullptr)
         {
             fin.close();
-            return -1;
+            return false;
         }
 
         *name_start = '\0';
@@ -112,7 +79,7 @@ bool init(const char *filename, int &N, int &M, Student *&students)
         if (school_start == nullptr)
         {
             fin.close();
-            return -1;
+            return false;
         }
 
         *school_start = '\0';
@@ -125,7 +92,7 @@ bool init(const char *filename, int &N, int &M, Student *&students)
         if (students[i].id == nullptr || students[i].name == nullptr || students[i].school == nullptr)
         {
             fin.close();
-            return -1;
+            return false;
         }
     }
 
@@ -145,7 +112,7 @@ void select(int N, int M, Student *students, Student *&selectedStudents)
         selectedStudents[i].name = nullptr;
         selectedStudents[i].school = nullptr;
     }
-    srand(time(nullptr));
+    srand(static_cast<unsigned int>(time(nullptr)));
     bool *selected = new (nothrow) bool[M];
     if (selected == nullptr)
         return;
@@ -182,7 +149,7 @@ bool output(const char *filename, int N, Student *selectedStudents)
 {
     ofstream fout(filename);
     if (!fout.is_open())
-        return -1;
+        return false;
 
     for (int i = 0; i < N; i++)
         fout << selectedStudents[i].id << " " << selectedStudents[i].name << " " << selectedStudents[i].school << endl;
@@ -218,4 +185,32 @@ void release(int M, Student *students, int N, Student *selectedStudents)
         }
         delete[] selectedStudents;
     }
+}
+
+int main()
+{
+    int N, M;
+    Student *students = nullptr;
+    Student *selectedStudents = nullptr;
+
+    cout << "读取待抽签名单...";
+
+    if (!init("stulist.txt", N, M, students))
+    {
+        cout << "读取数据失败！" << endl;
+        return -1;
+    }
+    cout << "完成" << endl;
+    cout << "正在抽签...";
+    select(N, M, students, selectedStudents);
+    if (output("result.txt", N, selectedStudents))
+        cout << "完成" << endl;
+    else
+    {
+        cout << "写入结果失败！" << endl;
+        release(M, students, N, selectedStudents);
+        return -1;
+    }
+    release(M, students, N, selectedStudents);
+    return 0;
 }

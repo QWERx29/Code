@@ -139,8 +139,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="class_aat.h" />
     <ClInclude Include="cmd_console_tools.h" />
     <ClInclude Include="cmd_hdc_tools.h" />
+    <ClInclude Include="lib_aat_tools.h" />
     <ClInclude Include="simple_menu.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
