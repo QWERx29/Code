@@ -18,9 +18,6 @@
     <ClInclude Include="..\include\class_aat.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\lib_aat_tools.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\common\class_aat.cpp">
@@ -29,8 +26,5 @@
     <ClCompile Include="test_args_analyse_tools.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <Library Include="..\lib\lib_common_tools.lib" />
   </ItemGroup>
 </Project>

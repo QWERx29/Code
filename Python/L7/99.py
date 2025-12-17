@@ -18,7 +18,7 @@ import urllib3
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 START_ID = 56500
-END_ID = 56519 # 包含 MAX = 56503
+END_ID = 56590 # 包含 MAX = 56503
 BASE = "https://zwfw.spb.gov.cn/gjj/pfyycsml/pfyycsmlDetail?uuid={id}"
 
 HEADERS = {
@@ -33,10 +33,10 @@ CHECKPOINT_CSV = "spb_post_outlets_checkpoint.csv"
 FINAL_XLSX = "spb_post_outlets.xlsx"
 LOG_FILE = "spb_post_outlets.log"
 
-REQ_TIMEOUT = 12
-MAX_RETRY = 3
+REQ_TIMEOUT = 15
+MAX_RETRY = 5
 SLEEP_MIN = 0.1
-SLEEP_MAX = 0.3
+SLEEP_MAX = 0.6
 BATCH_SAVE = 200
 
 FIELD_ALIASES = {

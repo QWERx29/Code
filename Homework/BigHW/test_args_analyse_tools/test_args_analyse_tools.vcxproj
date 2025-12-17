@@ -140,14 +140,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\include\class_aat.h" />
-    <ClInclude Include="..\include\lib_aat_tools.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\common\class_aat.cpp" />
     <ClCompile Include="test_args_analyse_tools.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <Library Include="..\lib\lib_common_tools.lib" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

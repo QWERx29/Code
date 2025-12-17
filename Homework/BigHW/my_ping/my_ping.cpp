@@ -184,14 +184,17 @@ int main(int argc, char* argv[])
 	}
 
 	/* 带--help参数做特殊处理，打印提示信息后结束 */
-	if (args[ARGS_HELP].existed()) {
+	if (args[ARGS_HELP].existed()) 
+	{
 		usage(argv[0]);
 		return -1;
 	}
 
 	/* 可变参数分析完成后，看是否还有固定参数，以及固定参数的数量是否符合要求 */
-	if (need_fixed_args) {
-		if (cur_argc == argc) {  //说明后面没有跟需要的固定参数
+	if (need_fixed_args) 
+	{
+		if (cur_argc == argc) 
+		{  //说明后面没有跟需要的固定参数
 			cout << "需要指定IP地址，但未给出" << endl;
 			return -1;
 		}

@@ -30,5 +30,11 @@
     <ClInclude Include="lib_aat_tools.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="class_cft.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="txt_compare.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

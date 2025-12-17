@@ -26,11 +26,5 @@
     <ClInclude Include="..\include\class_aat.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\lib_aat_tools.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <Library Include="..\lib\lib_common_tools.lib" />
   </ItemGroup>
 </Project>

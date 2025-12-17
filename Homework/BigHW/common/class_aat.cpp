@@ -1,4 +1,4 @@
-/* 学号 姓名 班级 */
+// 2451317 冯久恒 大数据
 #define _CRT_SECURE_NO_WARNINGS
 #include <iostream>
 #include <sstream>
