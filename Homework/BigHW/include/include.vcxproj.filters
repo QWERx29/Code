@@ -36,5 +36,11 @@
     <ClInclude Include="txt_compare.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="exe_running.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="hw_check_exe.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

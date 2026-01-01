@@ -42,7 +42,8 @@ static void usage(const char* const argv0)
 	const int wopt = 7 + strlen(procname) + 4;
 	cout << endl;
 
-	msg << procname << " [Ver1.0.2]" << endl;
+	//msg << procname << " [Ver1.0.2]" << endl;
+	msg << procname << " [Ver2.0.3]" << endl;
 	msg << endl;
 
 	msg << "Usage: " << procname << " --file1 xxx --file2 xxx [ --trim none/left/rigth/all | --lineskip 0..100 | --lineoffset -100..100 | --ignore_blank | --max_diff 0..100 | --display none/normal/detailed ]" << endl;
@@ -136,7 +137,8 @@ int main(int argc, char** argv)
 	int cur_argc, ret = 0;
 
 	//最后一个参数1，表示除选项参数外，还有其它参数
-	if ((cur_argc = args_analyse_process(argc, argv, args, 0)) < 0) {
+	if ((cur_argc = args_analyse_process(argc, argv, args, 0)) < 0) 
+	{
 		//错误信息在函数中已打印
 		args_analyse_print(args);
 		usage(argv[0]);
@@ -144,20 +146,23 @@ int main(int argc, char** argv)
 	}
 
 	/* 对help做特殊处理 */
-	if (args[OPT_ARGS_HELP].existed()) {
+	if (args[OPT_ARGS_HELP].existed()) 
+	{
 		//只要有 --help，其它参数都忽略，显示帮助即可
 		args_analyse_print(args);
 		usage(argv[0]);
 		return -1; //执行完成直接退出
 	}
 
-	if (args[OPT_ARGS_FILE1].existed() + args[OPT_ARGS_FILE2].existed() != 2) {
+	if (args[OPT_ARGS_FILE1].existed() + args[OPT_ARGS_FILE2].existed() != 2) 
+	{
 		usage(argv[0]);
 		cout << "必须指定参数[" << args[OPT_ARGS_FILE1].get_name() << "和" << args[OPT_ARGS_FILE2].get_name() << "]" << endl;
 		return -1;
 	}
 
-	if (args[OPT_ARGS_CR_CRLF_NOT_EQUAL].existed() && (args[OPT_ARGS_TRIM].get_string() == "right" || args[OPT_ARGS_TRIM].get_string() == "all")) {
+	if (args[OPT_ARGS_CR_CRLF_NOT_EQUAL].existed() && (args[OPT_ARGS_TRIM].get_string() == "right" || args[OPT_ARGS_TRIM].get_string() == "all")) 
+	{
 		usage(argv[0]);
 		cout << "参数[" << args[OPT_ARGS_CR_CRLF_NOT_EQUAL].get_name() << "]不能和[" << args[OPT_ARGS_TRIM].get_name() << " right/all]同时存在." << endl;
 		return -1;

@@ -5,6 +5,8 @@
 #include <fstream>
 #include <iostream>
 #include <iomanip>
+#include <sstream>
+#include <istream>
 
 using namespace std;
 static const size_t MAX_LINE_BYTES = 65535;
@@ -16,19 +18,19 @@ static const size_t MAX_LINE_BYTES = 65535;
   返 回 值：
   说    明：
 ******************************************************************************/
-void show_color_str(int x, int y, const string& s, int bg, int fg)
+static void show_color_str(int x, int y, const string& s, int bg, int fg)
 {
     cct_showstr(x, y, s.c_str(), bg, fg, 1, -1);
 }
-void show_diff_char(int x, const char ch) // 背景亮黄(14)，前景红(4)
+static void show_diff_char(int x, const char ch) // 背景亮黄(14)，前景红(4)
 {
     cct_showch(x, -1, ch, 14, 4, 1);
 }
-void show_same_char(int x, const char ch) // 黑底白字
+static void show_same_char(int x, const char ch) // 黑底白字
 {
     cct_showch(x, -1, ch, 0, 15, 1);
 }
-void show_empty_highlight(int col)
+static void show_empty_highlight(int col)
 {
     cct_showstr(col, -1, "<EMPTY>", 14, 4, 1, -1);
 }
@@ -39,7 +41,7 @@ void show_empty_highlight(int col)
   返 回 值："Windows" / "Linux" / "Unknown"
   说    明：
 ******************************************************************************/
-string detect_file_format(const string& filename)
+static string detect_file_format(const string& filename)
 {
     ifstream ifs(filename, ios::binary);
     if (!ifs)
@@ -65,7 +67,7 @@ string detect_file_format(const string& filename)
   返 回 值：文件大小（字节），失败返回 -1
   说    明：
 *******************************************************************************/
-long get_file_size(const string& filename)
+static long get_file_size(const string& filename)
 {
     ifstream ifs(filename, ios::binary | ios::ate);
     if (!ifs)
@@ -85,7 +87,7 @@ const char* txt_compare::lineend_to_str(LineEndType t)
     }
 }
 
-int first_diff_pos(const string& a, const string& b)
+static int first_diff_pos(const string& a, const string& b)
 {
     int lena = (int)a.size();
     int lenb = (int)b.size();
@@ -125,6 +127,38 @@ txt_compare::txt_compare(const string& file1,
     debug_(debug),
     line_maxlen_(0)
 {
+    silent_ = false;
+    use_stream_ = false;
+    in1_ = nullptr;
+	in2_ = nullptr;
+}
+
+txt_compare::txt_compare(std::istream& a, std::istream& b,
+    const string& trim_type,
+    const string& display_type,
+    int lineskip,
+    int lineoffset,
+    int max_diffnum,
+    int max_linenum,
+    bool ignore_blank,
+    bool not_ignore_linefeed,
+    bool debug)
+    : file1_("(input_stream)"), file2_("(input_stream)"),
+    trim_type_(trim_type),
+    display_type_(display_type.empty() ? "none" : display_type),
+    lineskip_(lineskip),
+    lineoffset_(lineoffset),
+    max_diffnum_(max_diffnum),
+    max_linenum_(max_linenum),
+    ignore_blank_(ignore_blank),
+    not_ignore_linefeed_(not_ignore_linefeed),
+    debug_(debug),
+    line_maxlen_(0)
+{
+    silent_ = true;
+    use_stream_ = true;
+    in1_ = &a;
+    in2_ = &b;
 }
 /*****************************************************************************
   函数名称：*
@@ -715,6 +749,61 @@ bool txt_compare::load_file(const string& f, LineArray& arr, string& err)
     return true;
 }
 
+bool txt_compare::load_from_stream(std::istream* input, LineArray& arr, string& err)
+{
+    arr.size = 0;
+
+    if (!input) 
+    {
+        err = "流为空.";
+        return false;
+    }
+
+    input->clear();
+    input->seekg(0, std::ios::beg);
+
+    char c;
+    string line;
+    while (true)
+    {
+        line.clear();
+        LineEndType et = LET_EOF;
+        bool has_char = false;
+
+        while (input->get(c))
+        {
+            has_char = true;
+
+            if (c == '\r')
+            {
+                if (input->peek() == '\n')
+                {
+                    input->get();
+                    et = LET_CRLF;
+                }
+                else
+                    et = LET_CR;
+                break;
+            }
+            else if (c == '\n')
+            {
+                et = LET_LF;
+                break;
+            }
+            else
+                line.push_back(c);
+        }
+        if (!has_char)
+            break;
+        if (!*input)
+            et = LET_EOF;
+        arr.push_back(line, et);
+        if (!*input)
+            break;
+    }
+    return true;
+}
+
 int txt_compare::find_CR_pos(const string& raw, const string& norm) const
 {
     return (int)norm.size();
@@ -783,24 +872,55 @@ string txt_compare::make_raw_with_lineend(const string& raw, LineEndType et) con
     return s;
 }
 
-void txt_compare::compare()
+int txt_compare::compare()
 {
+    std::istream* f1 = nullptr;
+    std::istream* f2 = nullptr;
+    std::ifstream file1, file2;
+
+    if (use_stream_) 
+    {
+        string err;
+        if (!load_from_stream(in1_, lines1_, err))
+        {
+            out_ << "第1个" << err << "\n";
+            return -1;
+        }
+        if (!load_from_stream(in2_, lines2_, err))
+        {
+            out_ << "第2个" << err << "\n";
+            return -1;
+        }
+
+        f1 = in1_;
+        f2 = in2_;
+    }
+
+    else 
+    {
+        file1.open(file1_.c_str());
+        file2.open(file2_.c_str());
+
+        string err;
+        if (!load_file(file1_, lines1_, err))
+        {
+            out_ << "第1个" << err << "\n";
+            return -1;
+        }
+        if (!load_file(file2_, lines2_, err))
+        {
+            out_ << "第2个" << err << "\n";
+            return -1;
+        }
+        f1 = &file1;
+        f2 = &file2;
+    }
+
     out_.str("");
     out_.clear();
     file_info.str("");
     file_info.clear();
 
-    string err;
-    if (!load_file(file1_, lines1_, err))
-    {
-        out_ << "第1个" << err << "\n";
-        return;
-    }
-    if (!load_file(file2_, lines2_, err))
-    {
-        out_ << "第2个" << err << "\n";
-        return;
-    }
 
     update_line_maxlen();
 
@@ -808,36 +928,20 @@ void txt_compare::compare()
     {
         print_file_info_block("第1个文件的基本信息：", file1_, lines1_, file_info);
         print_file_info_block("第2个文件的基本信息：", file2_, lines2_, file_info);
-        std::cout << file_info.str();
+		if (!silent_)
+            std::cout << file_info.str();
     }
-    /*
-    int line1 = apply_offset_and_skip(lines1_, lineoffset_, lineskip_, ignore_blank_);
-    int line2 = apply_offset_and_skip(lines2_, -lineoffset_, lineskip_, ignore_blank_);
-
-    line1 = min(line1, lines1_.size);
-    line2 = min(line2, lines2_.size);
-    */
+    
     int line1 = 0;
     int line2 = 0;
 
-    /*
-     * lineoffset 的语义（严格按文档）：
-     *   > 0 : 文件2 向后偏移 lineoffset 行
-     *   < 0 : 文件1 向后偏移 -lineoffset 行
-     *   = 0 : 都不偏移
-     *
-     * offset / skip 都要遵守 ignore_blank 规则
-     * 且 offset 在 skip 之前生效
-     */
     if (lineoffset_ > 0)
     {
-        // 文件2 后移
         line1 = apply_offset_and_skip(lines1_, 0, 0, ignore_blank_);
         line2 = apply_offset_and_skip(lines2_, lineoffset_, 0, ignore_blank_);
     }
     else if (lineoffset_ < 0)
     {
-        // 文件1 后移
         line1 = apply_offset_and_skip(lines1_, -lineoffset_, 0, ignore_blank_);
         line2 = apply_offset_and_skip(lines2_, 0, 0, ignore_blank_);
     }
@@ -847,9 +951,6 @@ void txt_compare::compare()
         line2 = 0;
     }
 
-    /*
-     * lineskip 在 offset 之后、比较之前统一处理
-     */
     if (lineskip_ > 0)
     {
         if (ignore_blank_)
@@ -869,7 +970,7 @@ void txt_compare::compare()
     bool diff_max = false;
     bool title_printed = false;
 
-    const bool user_display = (display_type_ != "none");
+    const bool user_display = (display_type_ != "none" && !silent_);
     const bool show_line_detail = user_display || debug_;
 
     if (user_display)
@@ -888,17 +989,7 @@ void txt_compare::compare()
 
         int disp_l1 = eof1 ? lines1_.size + 1 : line1 + 1;
         int disp_l2 = eof2 ? lines2_.size + 1 : line2 + 1;
-        // 处理尾部空行 / 尾部多余字符 / 行结束符不同
-        
-        /*
-        if (ignore_blank_)
-        {
-            if (!eof1 && skip_blank_line(lines1_, line1, true))
-                continue;
-            if (!eof2 && skip_blank_line(lines2_, line2, false))
-                continue;
-        }*/
-        
+
         if (ignore_blank_)
         {
             bool skipped1 = false, skipped2 = false;
@@ -908,7 +999,6 @@ void txt_compare::compare()
             if (!eof2)
                 skipped2 = skip_blank_line(lines2_, line2, false);
 
-            // 只允许“双方同时跳”，否则保持 offset 关系
             if (skipped1 || skipped2)
                 continue;
         }
@@ -932,6 +1022,7 @@ void txt_compare::compare()
         bool end_diff_only = !eof1 && !eof2 && lines1_.ends[line1] != lines2_.ends[line2];
         if (not_ignore_linefeed_)
             lf_equal = (lines1_.ends[line1] == lines2_.ends[line2]);
+
         if (eof1 || eof2)
         {
             diff_cnt++;
@@ -1029,14 +1120,6 @@ void txt_compare::compare()
                     print_eof_difference_block(disp_l1, disp_l2, false, false, lines1_, lines2_, line1, line2, false);
             }
         }
-        /*
-        else if (norm1 == norm2 && !lf_equal)
-        {
-            diff_cnt++;
-            if (user_display)
-                print_eof_difference_block(disp_l1, disp_l2, false, false, lines1_, lines2_, line1, line2, false);
-        }
-        */
         else if (norm1 != norm2)
         {
             diff_cnt++;
@@ -1050,15 +1133,19 @@ void txt_compare::compare()
         }
         line1++;
         line2++;
+
     }
 
     if (user_display)
         print_debug_summary(diff_cnt, diff_max);
     else
         out_ << (diff_cnt > 0 ? "文件不同.\n" : "文件相同.\n");
+
+	return diff_cnt;
 }
 
 void txt_compare::result()
 {
-    std::cout << out_.str();
+	if (!silent_)
+        std::cout << out_.str();
 }

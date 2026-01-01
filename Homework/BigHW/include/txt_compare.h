@@ -73,6 +73,19 @@ public:
         bool ignore_blank,
         bool not_ignore_linefeed_,
         bool debug);
+
+    txt_compare(std::istream& a, std::istream& b,
+        const string& trim_type,
+        const string& display_type,
+        int lineskip,
+        int lineoffset,
+        int max_diffnum,
+        int max_linenum,
+        bool ignore_blank,
+        bool not_ignore_linefeed,
+        bool debug);
+
+    //txt_compare(std::istream& a, std::istream& b);
     void print_ruler_line(int content_col, int content_width);
     void print_hex_block(const std::string& title, const std::string& raw);
     void print_lineend_hex(LineEndType et);
@@ -89,7 +102,7 @@ public:
     string make_display_content(const string& raw, const string& norm, LineEndType end);
     void append_lineend(string& s, LineEndType end);
     
-    void compare();
+    int compare();
     void result();
 
 private:
@@ -114,7 +127,14 @@ private:
 
     size_t line_maxlen_;
 
+    bool silent_ = false;
+    std::istream* in1_ = nullptr;
+    std::istream* in2_ = nullptr;
+    bool use_stream_ = false;
+
+
     bool load_file(const string& filename, LineArray& arr, string& err);
+    bool load_from_stream(std::istream* input, LineArray& arr, string& err);
     static bool is_space_char(char c);
     int find_CR_pos(const std::string& raw, const std::string& norm) const;
     string trim_copy(const string& s) const;

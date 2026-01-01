@@ -144,6 +144,7 @@
     <ClCompile Include="cmd_console_tools.cpp" />
     <ClCompile Include="cmd_hdc_tools.cpp" />
     <ClCompile Include="simple_menu.cpp" />
+    <ClCompile Include="exe_running.cpp" />
     <ClCompile Include="txt_compare.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
